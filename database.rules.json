@@ -1,0 +1,29 @@
+{
+  "rules": {
+    ".read":  true,
+    ".write": false,
+
+    "crowd_density": {
+      ".read": true,
+      ".write": false,
+      "$zone": {
+        ".validate": "newData.hasChildren(['name','pct','updated'])"
+      }
+    },
+
+    "concessions": {
+      ".read": true,
+      ".write": false
+    },
+
+    "schedule": {
+      ".read": true,
+      ".write": false
+    },
+
+    "facilities": {
+      ".read": true,
+      ".write": false
+    }
+  }
+}

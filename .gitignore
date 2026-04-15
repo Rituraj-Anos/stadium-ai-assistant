@@ -1,0 +1,28 @@
+# ─────────────────────────────────────────
+# StadiumAI .gitignore
+# ─────────────────────────────────────────
+
+# !! MOST IMPORTANT — API keys / secrets !!
+js/config.js
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies (if you ever add a build step)
+node_modules/
+dist/
+
+# Environment
+.env
+.env.local

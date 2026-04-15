@@ -1,0 +1,150 @@
+{
+  "crowd_density": {
+    "north_stand": {
+      "name": "North Stand (A)",
+      "pct": 78,
+      "updated": 0
+    },
+    "east_stand": {
+      "name": "East Stand (B)",
+      "pct": 45,
+      "updated": 0
+    },
+    "south_stand": {
+      "name": "South Stand (C)",
+      "pct": 91,
+      "updated": 0
+    },
+    "west_stand": {
+      "name": "West Stand (D)",
+      "pct": 33,
+      "updated": 0
+    },
+    "upper_tier": {
+      "name": "Upper Tier (E)",
+      "pct": 60,
+      "updated": 0
+    },
+    "vip_section": {
+      "name": "VIP Section (F)",
+      "pct": 22,
+      "updated": 0
+    }
+  },
+
+  "concessions": {
+    "stall_a1": {
+      "name": "Stall A1 — North Burgers",
+      "waitMin": 14,
+      "isOpen": true,
+      "section": "A",
+      "lat": 0,
+      "lng": 0
+    },
+    "stall_b2": {
+      "name": "Stall B2 — East Snacks",
+      "waitMin": 3,
+      "isOpen": true,
+      "section": "B",
+      "lat": 0,
+      "lng": 0
+    },
+    "stall_c1": {
+      "name": "Stall C1 — South Grill",
+      "waitMin": 18,
+      "isOpen": true,
+      "section": "C",
+      "lat": 0,
+      "lng": 0
+    },
+    "stall_d1": {
+      "name": "Stall D1 — West Drinks",
+      "waitMin": 6,
+      "isOpen": true,
+      "section": "D",
+      "lat": 0,
+      "lng": 0
+    },
+    "stall_d2": {
+      "name": "Stall D2 — West Wraps",
+      "waitMin": 2,
+      "isOpen": true,
+      "section": "D",
+      "lat": 0,
+      "lng": 0
+    },
+    "stall_e1": {
+      "name": "Stall E1 — Upper Tier Café",
+      "waitMin": 9,
+      "isOpen": true,
+      "section": "E",
+      "lat": 0,
+      "lng": 0
+    },
+    "stall_vip": {
+      "name": "VIP Lounge Bar",
+      "waitMin": 1,
+      "isOpen": true,
+      "section": "F",
+      "lat": 0,
+      "lng": 0
+    },
+    "stall_b3": {
+      "name": "Stall B3 — East Biryani",
+      "waitMin": 0,
+      "isOpen": false,
+      "section": "B",
+      "lat": 0,
+      "lng": 0
+    }
+  },
+
+  "schedule": {
+    "gates_open": {
+      "label": "Gates Open",
+      "time": 0,
+      "description": "Main gates open for entry"
+    },
+    "kickoff": {
+      "label": "Kickoff",
+      "time": 0,
+      "description": "Match begins"
+    },
+    "halftime": {
+      "label": "Half Time",
+      "time": 0,
+      "description": "15-minute halftime break"
+    },
+    "second_half": {
+      "label": "Second Half",
+      "time": 0,
+      "description": "Second half begins"
+    },
+    "final_whistle": {
+      "label": "Final Whistle",
+      "time": 0,
+      "description": "Match ends"
+    }
+  },
+
+  "facilities": {
+    "toilets": {
+      "t_north_main": { "name": "North Toilets (Main)", "section": "A", "lat": 0, "lng": 0 },
+      "t_east_upper": { "name": "East Toilets (Upper)", "section": "B", "lat": 0, "lng": 0 },
+      "t_south_main": { "name": "South Toilets (Main)", "section": "C", "lat": 0, "lng": 0 },
+      "t_west_main":  { "name": "West Toilets (Main)",  "section": "D", "lat": 0, "lng": 0 },
+      "t_upper":      { "name": "Upper Tier Toilets",   "section": "E", "lat": 0, "lng": 0 }
+    },
+    "exits": {
+      "exit_north": { "name": "North Exit Gate 1-4",   "section": "A", "lat": 0, "lng": 0, "isEmergency": false },
+      "exit_east":  { "name": "East Exit Gate 5-8",    "section": "B", "lat": 0, "lng": 0, "isEmergency": false },
+      "exit_south": { "name": "South Exit Gate 9-12",  "section": "C", "lat": 0, "lng": 0, "isEmergency": false },
+      "exit_west":  { "name": "West Exit Gate 13-16",  "section": "D", "lat": 0, "lng": 0, "isEmergency": false }
+    },
+    "first_aid": {
+      "aid_north": { "name": "First Aid — North",  "section": "A", "lat": 0, "lng": 0 },
+      "aid_south": { "name": "First Aid — South",  "section": "C", "lat": 0, "lng": 0 },
+      "aid_pitch":  { "name": "Pitch-side Medical", "section": "Pitch", "lat": 0, "lng": 0 }
+    }
+  }
+}
