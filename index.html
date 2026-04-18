@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StadiumAI — Smart Venue Assistant</title>
+  <meta name="description" content="Real-time crowd intelligence and AI-powered navigation for large-scale sporting venues." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- Google Maps JS API — key injected from config -->
+  <script>
+    window.__MAPS_READY = false;
+    function onMapsReady() { window.__MAPS_READY = true; document.dispatchEvent(new Event('maps-ready')); }
+  </script>
+
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Skip link for accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       TOP BAR — Live event countdown strip
+  ═══════════════════════════════════════════ -->
+  <header class="topbar" role="banner" aria-label="Event status bar">
+    <div class="topbar__left">
+      <span class="topbar__logo" aria-label="StadiumAI">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M5 10h10M10 5v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="10" cy="10" r="2" fill="currentColor"/>
+        </svg>
+        StadiumAI
+      </span>
+      <span class="topbar__venue" id="venue-name">— Stadium</span>
+    </div>
+
+    <div class="topbar__center" role="timer" aria-live="polite" aria-label="Next event countdown">
+      <span class="topbar__event-label" id="next-event-label">Loading schedule…</span>
+      <span class="topbar__countdown" id="event-countdown" aria-label="Time remaining">--:--</span>
+    </div>
+
+    <div class="topbar__right">
+      <span class="status-dot" id="live-dot" aria-label="Connection status: live" title="Live data"></span>
+      <span class="topbar__status-text" id="live-status">LIVE</span>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       MAIN LAYOUT
+  ═══════════════════════════════════════════ -->
+  <main id="main-content" class="app-layout" role="main">
+
+    <!-- ── LEFT SIDEBAR ── -->
+    <aside class="sidebar" aria-label="Venue information panel">
+
+      <!-- Section selector -->
+      <section class="panel" aria-labelledby="section-heading">
+        <h2 class="panel__title" id="section-heading">Your Location</h2>
+        <div class="section-picker">
+          <label for="seat-section" class="sr-only">Select your seat section</label>
+          <select id="seat-section" class="select-input" aria-label="Select your seat section">
+            <option value="">— Choose your section —</option>
+            <option value="A">Section A (North Stand)</option>
+            <option value="B">Section B (East Stand)</option>
+            <option value="C">Section C (South Stand)</option>
+            <option value="D">Section D (West Stand)</option>
+            <option value="E">Section E (Upper Tier)</option>
+            <option value="F">Section F (VIP)</option>
+          </select>
+          <button class="btn btn--primary" id="set-section-btn" aria-label="Confirm your section selection">
+            Confirm Section
+          </button>
+        </div>
+        <div class="section-badge" id="active-section-badge" aria-live="polite" hidden>
+          <span class="section-badge__icon" aria-hidden="true">◎</span>
+          <span id="active-section-text">Section A</span>
+        </div>
+      </section>
+
+      <!-- Crowd density panel -->
+      <section class="panel" aria-labelledby="crowd-heading">
+        <h2 class="panel__title" id="crowd-heading">
+          Crowd Density
+          <span class="panel__live-badge" aria-label="live data">LIVE</span>
+        </h2>
+        <div class="crowd-zones" id="crowd-zones" aria-label="Crowd density by zone">
+          <!-- Populated by firebase.js -->
+          <div class="loading-skeleton" aria-busy="true" aria-label="Loading crowd data"></div>
+          <div class="loading-skeleton" aria-busy="true"></div>
+          <div class="loading-skeleton" aria-busy="true"></div>
+        </div>
+      </section>
+
+      <!-- Concession wait times -->
+      <section class="panel" aria-labelledby="wait-heading">
+        <h2 class="panel__title" id="wait-heading">
+          Concession Wait Times
+          <span class="panel__live-badge" aria-label="live data">LIVE</span>
+        </h2>
+        <div class="best-stall-banner" id="best-stall-banner" hidden aria-live="polite">
+          <span class="best-stall-banner__label">Shortest queue</span>
+          <span class="best-stall-banner__value" id="best-stall-text">—</span>
+        </div>
+        <ul class="wait-list" id="wait-list" role="list" aria-label="Concession stall wait times">
+          <li class="loading-skeleton" aria-busy="true" aria-label="Loading wait times"></li>
+          <li class="loading-skeleton" aria-busy="true"></li>
+          <li class="loading-skeleton" aria-busy="true"></li>
+          <li class="loading-skeleton" aria-busy="true"></li>
+        </ul>
+      </section>
+
+      <!-- Quick actions -->
+      <section class="panel" aria-labelledby="actions-heading">
+        <h2 class="panel__title" id="actions-heading">Quick Navigate</h2>
+        <div class="quick-actions" role="group" aria-label="Quick navigation actions">
+          <button class="quick-btn" id="nav-toilet" aria-label="Navigate to nearest toilet">
+            <span class="quick-btn__icon" aria-hidden="true">↕</span>
+            Nearest Toilet
+          </button>
+          <button class="quick-btn" id="nav-exit" aria-label="Navigate to best exit route">
+            <span class="quick-btn__icon" aria-hidden="true">⇥</span>
+            Best Exit
+          </button>
+          <button class="quick-btn" id="nav-food" aria-label="Navigate to shortest food queue">
+            <span class="quick-btn__icon" aria-hidden="true">◈</span>
+            Shortest Queue
+          </button>
+          <button class="quick-btn" id="nav-aid" aria-label="Navigate to first aid station">
+            <span class="quick-btn__icon" aria-hidden="true">✛</span>
+            First Aid
+          </button>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- ── MAP AREA ── -->
+    <section class="map-area" aria-labelledby="map-heading">
+      <h2 class="sr-only" id="map-heading">Venue map</h2>
+
+      <!-- Map container — Google Maps injects here -->
+      <div id="venue-map" class="venue-map" role="application" aria-label="Interactive venue map" tabindex="0">
+        <div class="map-loading" id="map-loading" aria-live="polite">
+          <div class="map-loading__spinner" aria-hidden="true"></div>
+          <p>Loading venue map…</p>
+        </div>
+      </div>
+
+      <!-- Map overlay controls -->
+      <div class="map-controls" role="group" aria-label="Map display options">
+        <button class="map-ctrl-btn active" id="layer-crowd" aria-pressed="true" aria-label="Toggle crowd density layer">
+          Crowd
+        </button>
+        <button class="map-ctrl-btn" id="layer-exits" aria-pressed="false" aria-label="Toggle exits layer">
+          Exits
+        </button>
+        <button class="map-ctrl-btn" id="layer-food" aria-pressed="false" aria-label="Toggle concessions layer">
+          Food
+        </button>
+        <button class="map-ctrl-btn" id="layer-aid" aria-pressed="false" aria-label="Toggle first aid layer">
+          Aid
+        </button>
+      </div>
+
+      <!-- Route result banner -->
+      <div class="route-banner" id="route-banner" hidden role="status" aria-live="polite">
+        <span class="route-banner__icon" aria-hidden="true">→</span>
+        <span id="route-banner-text">Calculating route…</span>
+        <button class="route-banner__close" id="route-close-btn" aria-label="Close route">✕</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════
+       AI CHAT — Floating assistant
+  ═══════════════════════════════════════════ -->
+  <div id="chat-widget" class="chat-widget" role="complementary" aria-label="AI assistant">
+
+    <!-- Chat trigger button -->
+    <button class="chat-fab" id="chat-fab" aria-label="Open AI assistant" aria-expanded="false" aria-controls="chat-panel">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M11 2C6.03 2 2 5.68 2 10.2c0 2.42 1.1 4.6 2.86 6.1L4 20l3.94-1.4A9.4 9.4 0 0011 19.4c4.97 0 9-3.68 9-8.2S15.97 2 11 2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      </svg>
+      <span class="chat-fab__label">Ask AI</span>
+      <span class="chat-fab__badge" id="chat-badge" hidden aria-label="New message">●</span>
+    </button>
+
+    <!-- Chat panel -->
+    <div class="chat-panel" id="chat-panel" hidden aria-label="AI assistant chat window" role="dialog" aria-modal="false">
+      <header class="chat-header">
+        <div class="chat-header__info">
+          <span class="chat-header__avatar" aria-hidden="true">AI</span>
+          <div>
+            <p class="chat-header__name">Stadium Assistant</p>
+            <p class="chat-header__sub" id="chat-status-text">Powered by Gemini</p>
+          </div>
+        </div>
+        <button class="chat-header__close" id="chat-close-btn" aria-label="Close assistant">✕</button>
+      </header>
+
+      <div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-label="Chat conversation">
+        <!-- Welcome message injected by chat.js -->
+      </div>
+
+      <!-- Quick prompt chips -->
+      <div class="chat-chips" id="chat-chips" role="group" aria-label="Suggested questions">
+        <button class="chip" data-prompt="Best exit near my section?" aria-label="Ask: Best exit near my section?">Best exit near me</button>
+        <button class="chip" data-prompt="How long till halftime?" aria-label="Ask: How long till halftime?">Till halftime?</button>
+        <button class="chip" data-prompt="Where's the shortest food queue?" aria-label="Ask: Shortest food queue?">Shortest queue</button>
+        <button class="chip" data-prompt="Is my section crowded right now?" aria-label="Ask: Is my section crowded?">My section crowd</button>
+      </div>
+
+      <form class="chat-input-area" id="chat-form" novalidate aria-label="Send a message">
+        <label for="chat-input" class="sr-only">Type your question</label>
+        <input
+          type="text"
+          id="chat-input"
+          class="chat-input"
+          placeholder="Ask anything about the venue…"
+          autocomplete="off"
+          maxlength="300"
+          aria-label="Type your question to the AI assistant"
+        />
+        <button type="submit" class="chat-send-btn" id="chat-send-btn" aria-label="Send message">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       ERROR TOAST
+  ═══════════════════════════════════════════ -->
+  <div class="toast-container" id="toast-container" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- ═══════════════════════════════════════════
+       SCRIPTS (order matters)
+  ═══════════════════════════════════════════ -->
+  <!-- Firebase SDK (v9 compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <!-- App modules -->
+  <script src="js/config.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/main.js"></script>
+
+  <!-- Google Maps — loaded last, key pulled from config -->
+  <script>
+    (function() {
+      if (!window.APP_CONFIG || !window.APP_CONFIG.mapsApiKey) return;
+      var s = document.createElement('script');
+      s.src = 'https://maps.googleapis.com/maps/api/js?key=' + window.APP_CONFIG.mapsApiKey + '&callback=onMapsReady&libraries=places';
+      s.async = true; s.defer = true;
+      document.head.appendChild(s);
+    })();
+  </script>
+
+</body>
+</html>
