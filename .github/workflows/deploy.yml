@@ -14,31 +14,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Inject config and deploy
-        env:
-          MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
-          FIREBASE_DATABASE_URL: ${{ secrets.FIREBASE_DATABASE_URL }}
-          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
-          FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+      - name: Create config.js from secrets
         run: |
-          cat > js/config.js << EOF
+          cat > js/config.js << 'ENDOFFILE'
           window.APP_CONFIG = {
-            mapsApiKey: '${MAPS_API_KEY}',
-            geminiApiKey: '${GEMINI_API_KEY}',
+            mapsApiKey: 'MAPS_KEY_PLACEHOLDER',
+            geminiApiKey: 'GEMINI_KEY_PLACEHOLDER',
             geminiModel: 'gemini-1.5-flash',
             firebase: {
-              apiKey:            '${FIREBASE_API_KEY}',
-              authDomain:        '${FIREBASE_PROJECT_ID}.firebaseapp.com',
-              databaseURL:       '${FIREBASE_DATABASE_URL}',
-              projectId:         '${FIREBASE_PROJECT_ID}',
-              storageBucket:     '${FIREBASE_PROJECT_ID}.firebasestorage.app',
-              messagingSenderId: '${FIREBASE_MESSAGING_SENDER_ID}',
-              appId:             '${FIREBASE_APP_ID}'
+              apiKey:            'FIREBASE_API_KEY_PLACEHOLDER',
+              authDomain:        'FIREBASE_PROJECT_ID_PLACEHOLDER.firebaseapp.com',
+              databaseURL:       'FIREBASE_DATABASE_URL_PLACEHOLDER',
+              projectId:         'FIREBASE_PROJECT_ID_PLACEHOLDER',
+              storageBucket:     'FIREBASE_PROJECT_ID_PLACEHOLDER.firebasestorage.app',
+              messagingSenderId: 'FIREBASE_SENDER_ID_PLACEHOLDER',
+              appId:             'FIREBASE_APP_ID_PLACEHOLDER'
             },
-            calendarApiKey: '${MAPS_API_KEY}',
+            calendarApiKey: 'MAPS_KEY_PLACEHOLDER',
             calendarId: '',
             app: {
               venueName:         'Eden Gardens',
@@ -47,7 +39,25 @@ jobs:
               refreshIntervalMs: 30000
             }
           };
-          EOF
+          ENDOFFILE
+          sed -i "s|MAPS_KEY_PLACEHOLDER|$MAPS_API_KEY|g" js/config.js
+          sed -i "s|GEMINI_KEY_PLACEHOLDER|$GEMINI_API_KEY|g" js/config.js
+          sed -i "s|FIREBASE_API_KEY_PLACEHOLDER|$FIREBASE_API_KEY|g" js/config.js
+          sed -i "s|FIREBASE_DATABASE_URL_PLACEHOLDER|$FIREBASE_DATABASE_URL|g" js/config.js
+          sed -i "s|FIREBASE_PROJECT_ID_PLACEHOLDER|$FIREBASE_PROJECT_ID|g" js/config.js
+          sed -i "s|FIREBASE_SENDER_ID_PLACEHOLDER|$FIREBASE_MESSAGING_SENDER_ID|g" js/config.js
+          sed -i "s|FIREBASE_APP_ID_PLACEHOLDER|$FIREBASE_APP_ID|g" js/config.js
+        env:
+          MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          FIREBASE_DATABASE_URL: ${{ secrets.FIREBASE_DATABASE_URL }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+
+      - name: Verify config.js was created
+        run: cat js/config.js
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
