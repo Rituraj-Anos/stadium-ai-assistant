@@ -128,10 +128,12 @@ function initMap() {
 
   const center = cfg.venueLocation;
 
-  map = new google.maps.Map(document.getElementById('venue-map'), {
+  // Build map options — mapId is optional and must be a registered ID from
+  // Google Cloud Console → Maps Platform → Map Management.
+  // If not configured, omit it so the custom styles array works correctly.
+  const mapOptions = {
     center,
     zoom: cfg.venueZoom || 17,
-    mapId: 'stadium_ai_map',
 
     // Dark map style to match our UI theme
     styles: darkMapStyle(),
@@ -143,7 +145,12 @@ function initMap() {
       position: google.maps.ControlPosition.LEFT_BOTTOM
     },
     gestureHandling: 'greedy'
-  });
+  };
+
+  // Only add mapId if explicitly configured (must be registered in Cloud Console)
+  if (cfg.mapId) mapOptions.mapId = cfg.mapId;
+
+  map = new google.maps.Map(document.getElementById('venue-map'), mapOptions);
 
   // Init Directions services
   directionsService  = new google.maps.DirectionsService();
