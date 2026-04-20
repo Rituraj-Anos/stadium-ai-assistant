@@ -4,6 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StadiumAI — Smart Venue Assistant</title>
+
+  <!-- Content Security Policy —— restricts resource origins to known trusted domains -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self';
+             script-src 'self' https://*.googleapis.com https://*.gstatic.com https://*.firebaseio.com 'unsafe-inline';
+             style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+             font-src 'self' https://fonts.gstatic.com;
+             connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://generativelanguage.googleapis.com https://translation.googleapis.com;
+             img-src 'self' data: https://*.googleapis.com https://*.gstatic.com;">
+
+  <!-- Referrer Policy — prevents leaking API keys in referrer headers -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="description" content="Real-time crowd intelligence and AI-powered navigation for large-scale sporting venues." />
 
   <!-- Google Fonts -->
@@ -215,6 +227,22 @@
         <button class="chip" data-prompt="How long till halftime?" aria-label="Ask: How long till halftime?">Till halftime?</button>
         <button class="chip" data-prompt="Where's the shortest food queue?" aria-label="Ask: Shortest food queue?">Shortest queue</button>
         <button class="chip" data-prompt="Is my section crowded right now?" aria-label="Ask: Is my section crowded?">My section crowd</button>
+      </div>
+
+      <!-- Language selector — powered by Google Cloud Translation API -->
+      <div class="chat-lang-bar" role="group" aria-label="Response language">
+        <label for="chat-lang" class="chat-lang-bar__label">🌐</label>
+        <select id="chat-lang" class="chat-lang-select" aria-label="Choose response language">
+          <option value="en">English</option>
+          <option value="hi">हिन्दी (Hindi)</option>
+          <option value="es">Español (Spanish)</option>
+          <option value="fr">Français (French)</option>
+          <option value="de">Deutsch (German)</option>
+          <option value="zh">中文 (Chinese)</option>
+          <option value="ar">العربية (Arabic)</option>
+          <option value="pt">Português</option>
+          <option value="ja">日本語 (Japanese)</option>
+        </select>
       </div>
 
       <form class="chat-input-area" id="chat-form" novalidate aria-label="Send a message">

@@ -147,12 +147,22 @@ async function sendMessage(text) {
 
   try {
     const reply = await callGemini(text);
+
+    // Translate the reply if user has selected a non-English language
+    const targetLang = getSelectedLanguage();
+    const finalReply = (targetLang && targetLang !== 'en')
+      ? await translateText(reply, targetLang)
+      : reply;
+
     removeTyping(typingId);
-    appendMessage('ai', reply);
+    appendMessage('ai', finalReply);
   } catch (err) {
     removeTyping(typingId);
     console.error('[chat] Gemini error:', err);
-    appendMessage('ai', 'Sorry, I couldn\'t reach the AI right now. Please try again in a moment.');
+    const friendlyMsg = typeof StadiumErrors !== 'undefined'
+      ? StadiumErrors.friendlyGeminiError(err)
+      : 'Sorry, I couldn\'t reach the AI right now. Please try again in a moment.';
+    appendMessage('ai', friendlyMsg);
   } finally {
     setInputEnabled(true);
     scrollToBottom();
@@ -204,11 +214,13 @@ async function callGemini(userMessage) {
     ]
   };
 
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+  const response = await (typeof StadiumErrors !== 'undefined'
+    ? StadiumErrors.withTimeout(
+        fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
+        10000, 'Gemini API'
+      )
+    : fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+  );
 
   if (!response.ok) {
     const errData = await response.json().catch(() => ({}));
@@ -344,6 +356,63 @@ async function buildOfflineReply(msg) {
 }
 
 /* ─────────────────────────────────────────
+   GOOGLE CLOUD TRANSLATION API (5th Google Service)
+───────────────────────────────────────── */
+
+/**
+ * Translates text using the Google Cloud Translation API (v2 / Basic).
+ * Enables non-English speakers to receive AI responses in their language.
+ * Uses the same Maps API key as other Google services in the project.
+ *
+ * @param {string} text        - Text to translate.
+ * @param {string} targetLang  - BCP-47 language code (e.g. 'hi', 'es', 'fr').
+ * @returns {Promise<string>}   Translated text, or original on error.
+ */
+async function translateText(text, targetLang = 'en') {
+  if (!text || targetLang === 'en') return text;
+
+  const cfg = window.APP_CONFIG;
+  if (!cfg || !cfg.mapsApiKey || cfg.mapsApiKey === 'YOUR_MAPS_API_KEY_HERE') {
+    // Key not configured — return original text silently
+    return text;
+  }
+
+  const url = `https://translation.googleapis.com/language/translate/v2?key=${cfg.mapsApiKey}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        q:      text,
+        target: targetLang,
+        format: 'text'
+      })
+    });
+
+    if (!response.ok) {
+      console.warn('[chat] Translation API error:', response.status);
+      return text; // Graceful fallback to original text
+    }
+
+    const data = await response.json();
+    return data?.data?.translations?.[0]?.translatedText || text;
+  } catch (err) {
+    console.warn('[chat] Translation failed, using original:', err.message);
+    return text; // Always degrade gracefully
+  }
+}
+
+/**
+ * Reads the currently selected language code from the chat language selector.
+ * @returns {string} BCP-47 language code (e.g. 'en', 'hi', 'es').
+ */
+function getSelectedLanguage() {
+  const select = document.getElementById('chat-lang');
+  return select ? select.value : 'en';
+}
+
+/* ─────────────────────────────────────────
    HELPERS
 ───────────────────────────────────────── */
 
@@ -457,8 +526,11 @@ function setInputEnabled(enabled) {
  */
 function escHtml(str) {
   return String(str)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 /* ─────────────────────────────────────────
