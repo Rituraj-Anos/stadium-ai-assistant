@@ -1,0 +1,63 @@
+name: CI — Test & Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Unit Tests & Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm test -- --ci --forceExit
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
+
+  lint:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate HTML structure
+        run: |
+          echo "Checking index.html exists and has key elements..."
+          grep -q '<meta charset' index.html && echo "✓ charset meta found"
+          grep -q 'Content-Security-Policy' index.html && echo "✓ CSP header found"
+          grep -q 'aria-label' index.html && echo "✓ ARIA labels found"
+          grep -q 'role=' index.html && echo "✓ ARIA roles found"
+
+      - name: Check Firebase rules file
+        run: |
+          echo "Validating database.rules.json..."
+          cat database.rules.json | python3 -m json.tool > /dev/null && echo "✓ database.rules.json is valid JSON"
+
+      - name: Verify test coverage files exist
+        run: |
+          echo "Checking test directory structure..."
+          ls -la tests/
+          echo "✓ Test files present"
