@@ -57,7 +57,12 @@ function onCrowdUpdate(callback) {
 
   _listeners.crowd = ref.on('value', snapshot => {
     const raw = snapshot.val();
-    if (!raw) return;
+    if (!raw) {
+      if (typeof StadiumErrors !== 'undefined') {
+        StadiumErrors.showEmptyState('crowd-zones', 'No crowd data available');
+      }
+      return;
+    }
 
     // Convert Firebase object → sorted array
     const zones = Object.entries(raw)
@@ -71,7 +76,13 @@ function onCrowdUpdate(callback) {
       .sort((a, b) => b.pct - a.pct);    // highest crowd first
 
     callback(zones);
-  }, err => console.error('[firebase] crowd_density error:', err));
+  }, err => {
+    console.error('[firebase] crowd_density error:', err);
+    if (typeof StadiumErrors !== 'undefined') {
+      StadiumErrors.showEmptyState('crowd-zones', 'Crowd data unavailable — check connection');
+      StadiumErrors.setConnectionStatus(false);
+    }
+  });
 }
 
 /* ─────────────────────────────────────────
@@ -106,7 +117,12 @@ function onWaitTimesUpdate(callback) {
       .sort((a, b) => a.waitMin - b.waitMin);   // shortest wait first
 
     callback(stalls);
-  }, err => console.error('[firebase] concessions error:', err));
+  }, err => {
+    console.error('[firebase] concessions error:', err);
+    if (typeof StadiumErrors !== 'undefined') {
+      StadiumErrors.showEmptyState('wait-list', 'Wait time data unavailable');
+    }
+  });
 }
 
 /* ─────────────────────────────────────────
@@ -136,7 +152,14 @@ function onScheduleUpdate(callback) {
       .sort((a, b) => a.time - b.time)[0] || null;
 
     callback(upcoming);
-  }, err => console.error('[firebase] schedule error:', err));
+  }, err => {
+    console.error('[firebase] schedule error:', err);
+    if (typeof StadiumErrors !== 'undefined') {
+      StadiumErrors.showEmptyState('next-event-label', 'Schedule unavailable');
+    }
+    const countdownEl = document.getElementById('event-countdown');
+    if (countdownEl) countdownEl.textContent = '--:--';
+  });
 }
 
 /* ─────────────────────────────────────────

@@ -31,7 +31,6 @@
       "updated": 0
     }
   },
-
   "concessions": {
     "stall_a1": {
       "name": "Stall A1 — North Burgers",
@@ -98,53 +97,115 @@
       "lng": 0
     }
   },
-
   "schedule": {
     "gates_open": {
       "label": "Gates Open",
-      "time": 0,
+      "time": 1776432084981,
       "description": "Main gates open for entry"
     },
     "kickoff": {
       "label": "Kickoff",
-      "time": 0,
+      "time": 1776436584981,
       "description": "Match begins"
     },
     "halftime": {
       "label": "Half Time",
-      "time": 0,
+      "time": 1776439284981,
       "description": "15-minute halftime break"
     },
     "second_half": {
       "label": "Second Half",
-      "time": 0,
+      "time": 1776440184981,
       "description": "Second half begins"
     },
     "final_whistle": {
       "label": "Final Whistle",
-      "time": 0,
+      "time": 1776442884981,
       "description": "Match ends"
     }
   },
-
   "facilities": {
     "toilets": {
-      "t_north_main": { "name": "North Toilets (Main)", "section": "A", "lat": 0, "lng": 0 },
-      "t_east_upper": { "name": "East Toilets (Upper)", "section": "B", "lat": 0, "lng": 0 },
-      "t_south_main": { "name": "South Toilets (Main)", "section": "C", "lat": 0, "lng": 0 },
-      "t_west_main":  { "name": "West Toilets (Main)",  "section": "D", "lat": 0, "lng": 0 },
-      "t_upper":      { "name": "Upper Tier Toilets",   "section": "E", "lat": 0, "lng": 0 }
+      "t_north_main": {
+        "name": "North Toilets (Main)",
+        "section": "A",
+        "lat": 0,
+        "lng": 0
+      },
+      "t_east_upper": {
+        "name": "East Toilets (Upper)",
+        "section": "B",
+        "lat": 0,
+        "lng": 0
+      },
+      "t_south_main": {
+        "name": "South Toilets (Main)",
+        "section": "C",
+        "lat": 0,
+        "lng": 0
+      },
+      "t_west_main": {
+        "name": "West Toilets (Main)",
+        "section": "D",
+        "lat": 0,
+        "lng": 0
+      },
+      "t_upper": {
+        "name": "Upper Tier Toilets",
+        "section": "E",
+        "lat": 0,
+        "lng": 0
+      }
     },
     "exits": {
-      "exit_north": { "name": "North Exit Gate 1-4",   "section": "A", "lat": 0, "lng": 0, "isEmergency": false },
-      "exit_east":  { "name": "East Exit Gate 5-8",    "section": "B", "lat": 0, "lng": 0, "isEmergency": false },
-      "exit_south": { "name": "South Exit Gate 9-12",  "section": "C", "lat": 0, "lng": 0, "isEmergency": false },
-      "exit_west":  { "name": "West Exit Gate 13-16",  "section": "D", "lat": 0, "lng": 0, "isEmergency": false }
+      "exit_north": {
+        "name": "North Exit Gate 1-4",
+        "section": "A",
+        "lat": 0,
+        "lng": 0,
+        "isEmergency": false
+      },
+      "exit_east": {
+        "name": "East Exit Gate 5-8",
+        "section": "B",
+        "lat": 0,
+        "lng": 0,
+        "isEmergency": false
+      },
+      "exit_south": {
+        "name": "South Exit Gate 9-12",
+        "section": "C",
+        "lat": 0,
+        "lng": 0,
+        "isEmergency": false
+      },
+      "exit_west": {
+        "name": "West Exit Gate 13-16",
+        "section": "D",
+        "lat": 0,
+        "lng": 0,
+        "isEmergency": false
+      }
     },
     "first_aid": {
-      "aid_north": { "name": "First Aid — North",  "section": "A", "lat": 0, "lng": 0 },
-      "aid_south": { "name": "First Aid — South",  "section": "C", "lat": 0, "lng": 0 },
-      "aid_pitch":  { "name": "Pitch-side Medical", "section": "Pitch", "lat": 0, "lng": 0 }
+      "aid_north": {
+        "name": "First Aid — North",
+        "section": "A",
+        "lat": 0,
+        "lng": 0
+      },
+      "aid_south": {
+        "name": "First Aid — South",
+        "section": "C",
+        "lat": 0,
+        "lng": 0
+      },
+      "aid_pitch": {
+        "name": "Pitch-side Medical",
+        "section": "Pitch",
+        "lat": 0,
+        "lng": 0
+      }
     }
   }
 }

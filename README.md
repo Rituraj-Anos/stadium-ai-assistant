@@ -2,7 +2,7 @@
 
 > PromptWars Hackathon · Physical Event Experience vertical
 
-**Live Preview:** [your-username.github.io/stadium-ai-assistant](https://your-username.github.io/stadium-ai-assistant)
+**Live Preview:** [your-username.github.io/stadium-ai-assistant](https://rituraj-anos.github.io/stadium-ai-assistant)
 
 ---
 
