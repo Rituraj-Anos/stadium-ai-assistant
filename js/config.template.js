@@ -45,7 +45,11 @@ window.APP_CONFIG = {
     venueName:     'City Arena',
     venueLocation: { lat: 28.6139, lng: 77.2090 },  // Default: New Delhi — update to your venue
     venueZoom:     17,
-    refreshIntervalMs: 30000  // how often to refresh live data (30s)
+    refreshIntervalMs: 30000,  // how often to refresh live data (30s)
+
+    // Optional: Register a Map ID at Cloud Console → Maps Platform → Map Management
+    // then paste the hex ID here (e.g. '8e0a97af9386fef'). Leave blank to use custom styles.
+    mapId: ''
   }
 
 };
