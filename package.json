@@ -1,0 +1,20 @@
+{
+  "name": "stadium-ai-assistant",
+  "version": "1.0.0",
+  "description": "StadiumAI — Smart Venue Assistant powered by Gemini, Firebase, and Google Maps",
+  "scripts": {
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --coverage --ci --reporters=default --reporters=jest-junit"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-junit": "^16.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": ["**/tests/**/*.test.js"],
+    "coverageDirectory": "coverage",
+    "coverageReporters": ["text", "lcov", "html"]
+  }
+}
