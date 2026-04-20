@@ -8,11 +8,11 @@
   <!-- Content Security Policy —— restricts resource origins to known trusted domains -->
   <meta http-equiv="Content-Security-Policy"
     content="default-src 'self';
-             script-src 'self' https://*.googleapis.com https://*.gstatic.com https://*.firebaseio.com 'unsafe-inline';
-             style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+             script-src 'self' https://*.googleapis.com https://*.gstatic.com https://*.firebaseio.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval';
+             style-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com 'unsafe-inline';
              font-src 'self' https://fonts.gstatic.com;
-             connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://generativelanguage.googleapis.com https://translation.googleapis.com;
-             img-src 'self' data: https://*.googleapis.com https://*.gstatic.com;">
+             connect-src 'self' https://*.googleapis.com https://*.gstatic.com https://*.firebaseio.com https://generativelanguage.googleapis.com https://translation.googleapis.com wss://*.firebaseio.com;
+             img-src 'self' data: blob: https://*.googleapis.com https://*.gstatic.com;">
 
   <!-- Referrer Policy — prevents leaking API keys in referrer headers -->
   <meta name="referrer" content="strict-origin-when-cross-origin">
